@@ -21,9 +21,8 @@ public class MyGui {
 		mainPanel = new JPanel();
 		mainField = new JTextArea();
 		menuBar = new MyBar(mainFrame);
-		mainFrame.add(menuBar, BorderLayout.NORTH);
+		mainFrame.add(menuBar, BorderLayout.CENTER);
 		//mainFrame.add(tabPane, BorderLayout.NORTH);
-		mainFrame.add(new JScrollPane(mainField), BorderLayout.CENTER);
 		//mainFrame.setContentPane(mainPanel);
 		mainFrame.setSize(400, 300);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

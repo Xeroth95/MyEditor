@@ -18,10 +18,10 @@ public class MyBar extends JPanel{
 		this.parent = parent;
 		this.setLayout(new BorderLayout());
 		menuBar = new MyMenuBar(parent);
-		tabPane = new JTabbedPane(JTabbedPane.TOP);
+		tabPane = new JTabbedPane();
 		tabPane.addTab("Test", new MyWritePanel());
 		tabPane.addTab("Test2", new MyWritePanel());
 		this.add(menuBar, BorderLayout.NORTH);
-		this.add(tabPane, BorderLayout.SOUTH);
+		this.add(tabPane, BorderLayout.CENTER);
 	}
 }

@@ -1,5 +1,7 @@
 package GUI;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -9,6 +11,7 @@ public class MyWritePanel extends JPanel {
 
 	public MyWritePanel() {
 		super();
-		this.add(new JScrollPane(new JTextArea()));
+		this.setLayout(new BorderLayout());
+		this.add(new JScrollPane(new JTextArea()), BorderLayout.CENTER);
 	}
 }
