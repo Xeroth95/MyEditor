@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,7 +26,30 @@ import Test.ButtonTabComponent;
 public class MyTabbedBar extends JTabbedPane {
 	
 	public MyTabbedBar() {
-		
+		super();
+	}
+	
+	public MyTabbedBar(int tabPlacement) {
+		super(tabPlacement);
+	}
+	
+	public MyTabbedBar(int tabPlacement, int tabLayoutPolicy) {
+		super(tabPlacement, tabLayoutPolicy);
+	}
+	
+	public void addTab(String title, Component component) {
+		super.addTab(title, component);
+		this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
+	}
+	
+	public void addTab(String title, Icon icon, Component component) {
+		super.addTab(title, icon, component);
+		this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
+	}
+	
+	public void addTab(String title, Icon icon, Component component, String tip) {
+		super.addTab(title, icon, component, tip);
+		this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
 	}
 		
 	private class TabElement extends JPanel{
@@ -51,6 +75,34 @@ public class MyTabbedBar extends JTabbedPane {
 	            }
 	        };
 	        
+	        JLabel picLabel = new JLabel() {
+	        	public Icon getIcon() {
+	        		int i = pane.indexOfTabComponent(TabElement.this);
+	        		if (i != -1) {
+	        			return pane.getIconAt(i);
+	        		}
+	        		return null;
+	        	}
+	        };
+	        
+	        JLabel tip = new JLabel() {
+	        	public String getString() {
+	        		int i = pane.indexOfTabComponent(TabElement.this);
+	        		if (i != -1)
+	        			return pane.getToolTipTextAt(i);
+	        		return null;
+	        	}
+	        };
+	        
+	        String tipText = tip.getText();
+	        if (tipText != null && !tipText.equals("")) {
+	        	setToolTipText(tipText);
+	        	picLabel.setToolTipText(tipText);
+	        	label.setToolTipText(tipText);
+	        }
+	        
+	        add(picLabel);
+	        picLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 	        add(label);
 	        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 	        JButton button = new TabButton();
