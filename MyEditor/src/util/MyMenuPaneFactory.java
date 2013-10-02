@@ -21,7 +21,7 @@ public class MyMenuPaneFactory {
 			fileMenu.add(open);
 			JMenu add = new JMenu("Hinzufuegen");
 			{
-				MyMenuItem file = new MyMenuItem("Datei") { @Override public void execute(Component... components) {} };
+				MyMenuItem file = new MyMenuItem("Datei") { @Override public void execute(Component... components) {((MyTabbedPane) components[0]).addTab("Neu", new MyWritePane());} };
 				MyMenuItem folder = new MyMenuItem("Ordner") {@Override public void execute(Component... components) {} };
 				add.add(file);
 				add.add(folder);
