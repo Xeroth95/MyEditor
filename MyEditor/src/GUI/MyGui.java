@@ -14,14 +14,18 @@ public class MyGui {
 	JTextArea mainField;
 	
 	//MyClasses
-	MyBar menuBar;
+	MyBarPane menuBar;
+	MyPackagePane packExplo;
 	
 	public MyGui(String name) {
 		mainFrame = new JFrame(name);
+		mainFrame.setLayout(new BorderLayout());
 		mainPanel = new JPanel();
 		mainField = new JTextArea();
-		menuBar = new MyBar(mainFrame);
+		menuBar = new MyBarPane(mainFrame);
 		mainFrame.add(menuBar, BorderLayout.CENTER);
+		this.packExplo = new MyPackagePane();
+		mainFrame.add(this.packExplo, BorderLayout.WEST);
 		//mainFrame.add(tabPane, BorderLayout.NORTH);
 		//mainFrame.setContentPane(mainPanel);
 		mainFrame.setSize(400, 300);

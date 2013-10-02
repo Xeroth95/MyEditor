@@ -21,19 +21,17 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import Test.ButtonTabComponent;
-
-public class MyTabbedBar extends JTabbedPane {
+public class MyTabbedPane extends JTabbedPane {
 	
-	public MyTabbedBar() {
+	public MyTabbedPane() {
 		super();
 	}
 	
-	public MyTabbedBar(int tabPlacement) {
+	public MyTabbedPane(int tabPlacement) {
 		super(tabPlacement);
 	}
 	
-	public MyTabbedBar(int tabPlacement, int tabLayoutPolicy) {
+	public MyTabbedPane(int tabPlacement, int tabLayoutPolicy) {
 		super(tabPlacement, tabLayoutPolicy);
 	}
 	
@@ -84,6 +82,9 @@ public class MyTabbedBar extends JTabbedPane {
 	        		return null;
 	        	}
 	        };
+	        
+	        int i = pane.indexOfTabComponent(this);
+	        System.out.println(i);
 	        
 	        JLabel tip = new JLabel() {
 	        	public String getString() {

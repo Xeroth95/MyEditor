@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -10,24 +11,24 @@ import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import javax.swing.text.DefaultEditorKit;
 
-public class MyMenuBar extends JMenuBar implements ActionListener{
+public class MyMenuPane extends JMenuBar implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	
-	JMenu[] menus;
+	ArrayList<JMenu> menus;
 	JMenuItem[] menuItems;
 	JFrame parent;
 	JTabbedPane tabPane;
 	
 	JMenu currentMenu;
 	
-	public MyMenuBar(JFrame parent, JTabbedPane tabPane) {
+	public MyMenuPane(JFrame parent, JTabbedPane tabPane) {
 		super();
 		this.parent = parent;
 		this.tabPane = tabPane;
-		menus = new JMenu[2];
+		menus = new ArrayList<JMenu>();
 		menuItems = new JMenuItem[4];
-		menus[0] = new JMenu("Datei");
-		menus[1] = new JMenu("Hilfe");
+		menus.add(new JMenu("Datei"));
+		menus.add(new JMenu("Hilfe"));
 		currentMenu = new JMenu("Werkzeuge");
 		menuItems[0] = new JMenuItem("Neue Datei...");
 		menuItems[0].addActionListener(this);
@@ -37,13 +38,13 @@ public class MyMenuBar extends JMenuBar implements ActionListener{
 		menuItems[2].addActionListener(this);
 		menuItems[3] = new JMenuItem("�ber...");
 		menuItems[3].addActionListener(this);
-		this.add(menus[0]);
-		this.add(menus[1]);
-		menus[0].add(menuItems[0]);
-		menus[0].add(menuItems[1]);
-		menus[0].add(DefaultEditorKit.cutAction);
-		menus[1].add(menuItems[2]);
-		menus[1].add(menuItems[3]);
+		this.add(menus.get(0));
+		this.add(menus.get(1));
+		menus.get(0).add(menuItems[0]);
+		menus.get(0).add(menuItems[1]);
+		menus.get(0).add(DefaultEditorKit.cutAction);
+		menus.get(1).add(menuItems[2]);
+		menus.get(1).add(menuItems[3]);
 	}
 	
 	@Override
@@ -59,9 +60,6 @@ public class MyMenuBar extends JMenuBar implements ActionListener{
        }
        if (object.getSource() == menuItems[3]){
             System.out.println("über wurde angeklickt");
-       }
-       if (object.getSource() == menus[0]) {
-    	   System.out.println("Interessant!");
        }
 	}
 }
