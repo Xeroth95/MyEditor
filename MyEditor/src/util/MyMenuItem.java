@@ -10,5 +10,5 @@ public abstract class MyMenuItem extends JMenuItem {
 		super(name);
 	}
 	
-	public abstract void execute(Component... components);
+	public abstract void execute(Component...components);
 }

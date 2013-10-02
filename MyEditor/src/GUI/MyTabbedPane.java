@@ -83,9 +83,6 @@ public class MyTabbedPane extends JTabbedPane {
 	        	}
 	        };
 	        
-	        int i = pane.indexOfTabComponent(this);
-	        System.out.println(i);
-	        
 	        JLabel tip = new JLabel() {
 	        	public String getString() {
 	        		int i = pane.indexOfTabComponent(TabElement.this);

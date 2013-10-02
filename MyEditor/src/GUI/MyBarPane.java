@@ -6,6 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import util.MyMenuPaneFactory;
+
 public class MyBarPane extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
@@ -18,10 +20,16 @@ public class MyBarPane extends JPanel{
 		this.parent = parent;
 		this.setLayout(new BorderLayout());
 		this.tabPane = new MyTabbedPane();
-		this.menuBar = new MyMenuPane(parent, this.tabPane);
+		this.menuBar = MyMenuPaneFactory.builtDefault(parent, tabPane);//new MyMenuPane(parent, this.tabPane);
 		this.tabPane.addTab("Test", null, new MyWritePane());
 		this.tabPane.addTab("Test2", null, new MyWritePane(), "hihi");
-		this.add(this.menuBar, BorderLayout.NORTH);
-		this.add(this.tabPane, BorderLayout.CENTER);
+	}
+	
+	public MyMenuPane getMenu() {
+		return this.menuBar;
+	}
+	
+	public MyTabbedPane getTabs() {
+		return this.tabPane;
 	}
 }
