@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.management.InstanceNotFoundException;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -29,22 +30,53 @@ public class MyMenuPane extends JMenuBar implements ActionListener{
 		menuItems = new ArrayList<JMenuItem>();
 		menus.add(new JMenu("Datei"));
 		menus.add(new JMenu("Hilfe"));
-		currentMenu = new JMenu("Werkzeuge");
-		menuItems.add(new JMenuItem("Neue Datei..."));
+		menus.add(new JMenu("Werkzeuge"));
+		menus.add(new JMenu("Optionen"));
+		menuItems.add(new JMenuItem("Oeffen..."));
 		menuItems.get(0).addActionListener(this);
-		menuItems.add(new JMenuItem("�ffnen..."));
+		menuItems.add(new JMenuItem("Neue Datei..."));
 		menuItems.get(1).addActionListener(this);
-		menuItems.add(new JMenuItem("F.A.Q."));
+		menuItems.add(new JMenu("Hinzufuegen"));
 		menuItems.get(2).addActionListener(this);
-		menuItems.add(new JMenuItem("�ber..."));
+		menuItems.add(new JMenuItem("Ueber..."));
 		menuItems.get(3).addActionListener(this);
-		this.add(menus.get(0));
-		this.add(menus.get(1));
+		for (int i = 0; i < menus.size(); i++) {
+			this.add(menus.get(i));
+		}
 		menus.get(0).add(menuItems.get(0));
 		menus.get(0).add(menuItems.get(1));
 		menus.get(0).add(DefaultEditorKit.cutAction);
-		menus.get(1).add(menuItems.get(2));
+		menus.get(0).add(menuItems.get(2));
 		menus.get(1).add(menuItems.get(3));
+		menuItems.get(2).add(new JMenuItem("Datei..."));
+		menuItems.get(2).add(new JMenuItem("Ordner..."));
+	}
+	
+	public void addMenu(JMenu menu) {
+		this.menus.add(menu);
+	}
+	
+	public void addMenus(JMenu[] menus) {
+		for (int i = 0; i < menus.length; i++) {
+			this.menus.add(menus[i]);
+		}
+	}
+	
+	public void addMenuItem(JMenu menu, JMenuItem item) throws InstanceNotFoundException {
+		int index = this.menus.indexOf(menu);
+		if (index > 0)
+			this.menus.get(index).add(item);
+		else
+			throw new InstanceNotFoundException("No such Menu");
+	}
+	
+	public void addMenuItems(JMenu menu, JMenuItem[] items) throws InstanceNotFoundException {
+		int index = this.menus.indexOf(menu);
+		if (index > 0)
+			for (int i = 0; i < items.length; i++)
+				this.menus.get(index).add(items[i]);
+		else
+			throw new InstanceNotFoundException("No such Menu");
 	}
 	
 	@Override
