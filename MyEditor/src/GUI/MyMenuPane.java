@@ -12,6 +12,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
 import javax.swing.text.DefaultEditorKit;
 
+import util.MyMenuItem;
+
 public class MyMenuPane extends JMenuBar implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	
@@ -27,19 +29,23 @@ public class MyMenuPane extends JMenuBar implements ActionListener{
 		this.parent = parent;
 		this.tabPane = tabPane;
 		menus = new ArrayList<JMenu>();
-		menuItems = new ArrayList<JMenuItem>();
+		menuItems = new ArrayList<JMenuItme>();
 		menus.add(new JMenu("Datei"));
 		menus.add(new JMenu("Hilfe"));
 		menus.add(new JMenu("Werkzeuge"));
 		menus.add(new JMenu("Optionen"));
-		menuItems.add(new JMenuItem("Oeffen..."));
+		menuItems.add(new MyMenuItem("Oeffen..."));
 		menuItems.get(0).addActionListener(this);
-		menuItems.add(new JMenuItem("Neue Datei..."));
+		menuItems.add(new MyMenuItem("Neue Datei..."));
 		menuItems.get(1).addActionListener(this);
 		menuItems.add(new JMenu("Hinzufuegen"));
 		menuItems.get(2).addActionListener(this);
-		menuItems.add(new JMenuItem("Ueber..."));
+		menuItems.add(new MyMenuItem("Ueber..."));
 		menuItems.get(3).addActionListener(this);
+		menuItems.add(new MyMenuItem("Datei..."));
+		menuItems.get(4).addActionListener(this);
+		menuItems.add(new MyMenuItem("Ordner..."));
+		menuItems.get(5).addActionListener(this);
 		for (int i = 0; i < menus.size(); i++) {
 			this.add(menus.get(i));
 		}
@@ -48,8 +54,8 @@ public class MyMenuPane extends JMenuBar implements ActionListener{
 		menus.get(0).add(DefaultEditorKit.cutAction);
 		menus.get(0).add(menuItems.get(2));
 		menus.get(1).add(menuItems.get(3));
-		menuItems.get(2).add(new JMenuItem("Datei..."));
-		menuItems.get(2).add(new JMenuItem("Ordner..."));
+		menuItems.get(2).add(menuItems.get(4));
+		menuItems.get(2).add(menuItems.get(5));
 	}
 	
 	public void addMenu(JMenu menu) {
@@ -79,10 +85,9 @@ public class MyMenuPane extends JMenuBar implements ActionListener{
 			throw new InstanceNotFoundException("No such Menu");
 	}
 	
-	@Override
 	public void actionPerformed(ActionEvent object) {
 		if (object.getSource() == menuItems.get(0)){
-            tabPane.addTab("Neu", new MyWritePanel());
+            tabPane.addTab("Neu", new MyWritePane());
        }
        if (object.getSource() == menuItems.get(1)){
             System.out.println("beenden wurde angeklickt");
@@ -92,6 +97,9 @@ public class MyMenuPane extends JMenuBar implements ActionListener{
        }
        if (object.getSource() == menuItems.get(4)){
             System.out.println("über wurde angeklickt");
+       }
+       if (object.getSource() == menuItems.get(4)) {
+    	   this.tabPane.addTab("Neu", new MyWritePane());
        }
 	}
 }
