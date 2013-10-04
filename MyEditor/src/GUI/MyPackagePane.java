@@ -23,7 +23,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import util.MyFileOpener;
+import util.MyFileFactory;
 
 public class MyPackagePane extends JPanel implements MouseListener, TreeSelectionListener {
 	private static final long serialVersionUID = 1L;

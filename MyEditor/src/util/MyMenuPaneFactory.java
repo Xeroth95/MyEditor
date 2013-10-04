@@ -47,11 +47,15 @@ public class MyMenuPaneFactory {
 			JMenu add = new JMenu("Hinzufuegen");
 			{
 				MyMenuItem file = new MyMenuItem("Datei") { @Override public void execute(MyGui gui) {
-					String name = JOptionPane.showInputDialog("Geben sie hier den Namen der Datei an : ");
+					String name = MyFileFactory.showAddDialog("Neue Datei erstellen...", "Wie soll die Datei heiﬂen ?");
+					if (name == null)
+						return;
 					gui.getPackageExplorer().addToCurrent(name);
 				} };
 				MyMenuItem folder = new MyMenuItem("Ordner") {@Override public void execute(MyGui gui) {
-					String name = JOptionPane.showInputDialog("Geben sie hier den Namen der Datei an : ");
+					String name = MyFileFactory.showAddDialog("Neuen Ordner erstellen...", "Wie soll der Ordner heiﬂen ?");
+					if (name == null)
+						return;
 					gui.getPackageExplorer().addToCurrent(name);
 				} };
 				add.add(file);
