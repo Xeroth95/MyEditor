@@ -2,40 +2,52 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import util.MyFileOpener;
 
-public class MyPackagePane extends JPanel implements MouseListener {
+public class MyPackagePane extends JPanel implements MouseListener, TreeSelectionListener {
 	private static final long serialVersionUID = 1L;
 
-	JTree packExplo;
-	File startingDir;
-	MyGui parent;
+	private JTree packExplo;
+	private File startingDir, currentDir, currentFile;
+	private DefaultMutableTreeNode currentDirNode, currentNode;
+	private MyGui parent;
 	
 	public MyPackagePane(File directory, MyGui gui) {
 		super();
 		this.parent = gui;
 		this.setLayout(new BorderLayout());
 		this.startingDir = directory;
+		this.currentDir = directory;
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(directory.getName());
 		this.createNodes(top, directory);
-		this.openTabs();
 		this.packExplo = new JTree(top);
+		this.currentDirNode = top;
 		this.packExplo.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.packExplo.addMouseListener(this);
-		this.add(packExplo, BorderLayout.CENTER);
+		this.packExplo.addTreeSelectionListener(this);
+		this.packExplo.setComponentPopupMenu(this.getPopupMenu());
+		this.add(new JScrollPane(packExplo), BorderLayout.CENTER);
 	}
 	
 	private void createNodes(DefaultMutableTreeNode parent, File dir) {
@@ -49,6 +61,7 @@ public class MyPackagePane extends JPanel implements MouseListener {
 				parent.add(new DefaultMutableTreeNode(f.getName(), false));
 			} else {
 				DefaultMutableTreeNode newParent = new DefaultMutableTreeNode(f.getName());
+				newParent.setAllowsChildren(true);
 				parent.add(newParent);
 				createNodes(newParent, f);
 			}
@@ -66,9 +79,67 @@ public class MyPackagePane extends JPanel implements MouseListener {
 		return null;
 	}
 	
-	private void openTabs() {
-		/*MyFileOpener opener = new MyFileOpener(parent.getTabPane());
-		opener.openAll(this.startingDir);*/
+	private JPopupMenu getPopupMenu() {
+		JPopupMenu toReturn = new JPopupMenu();
+		
+		Action delete = new AbstractAction() {
+			
+			private boolean deleteDir(File dir) {
+				if (dir.isDirectory()) {
+					for (File file : dir.listFiles()) {
+				         if (file.isDirectory())
+				            deleteDir(file);
+				         file.delete();
+				    }
+				}
+			    return dir.delete();
+			}
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!deleteDir(MyPackagePane.this.currentFile)) {
+					JOptionPane.showMessageDialog(null, ((MyPackagePane.this.currentFile.isDirectory()) ? "Der Ordner " : "Die Datei ") + "konnte nicht gelöscht werden!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+				} else {
+					DefaultTreeModel model = (DefaultTreeModel) MyPackagePane.this.packExplo.getModel();
+					model.removeNodeFromParent(MyPackagePane.this.currentNode);
+				}
+			}
+			
+		};
+		delete.putValue(Action.NAME, "Löschen");
+		toReturn.add(delete);
+		
+		return toReturn;
+	}
+	
+	public void addToCurrent(String name) {
+		File newFile = new File(this.currentDir.getAbsolutePath() + "\\" + name);
+		if (newFile.isDirectory()) {
+			if (!newFile.mkdir()) {
+				JOptionPane.showMessageDialog(null, "Ordner konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
+				return;
+			} else {
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newFile.getName());
+				newNode.setAllowsChildren(true);
+				this.currentDirNode.add(newNode);
+				((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
+				TreePath path = new TreePath(newNode.getPath());
+				this.packExplo.setSelectionPath(path);
+			}
+		} else {
+			try {
+				newFile.createNewFile();
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, "Datei konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newFile.getName());
+			newNode.setAllowsChildren(false);
+			this.currentDirNode.add(newNode);
+			((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
+			TreePath path = new TreePath(newNode.getPath());
+			this.packExplo.setSelectionPath(path);
+		}
 	}
 
 	@Override
@@ -99,9 +170,17 @@ public class MyPackagePane extends JPanel implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {}
 	
-	/*@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.drawRect(0, 0, this.WIDTH, this.HEIGHT);
-	}*/
+	public void valueChanged(TreeSelectionEvent e) {
+		this.currentFile = this.getFileFromTreePath(e.getPath());
+		this.currentNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+		if (currentFile != null) {
+			if (currentFile.isDirectory()) {
+				this.currentDir = currentFile;
+				this.currentDirNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+			} else {
+				this.currentDir = currentFile.getParentFile();
+				this.currentDirNode = (DefaultMutableTreeNode) e.getPath().getPathComponent(e.getPath().getPathCount()-2);
+			}
+		}
+	}
 }

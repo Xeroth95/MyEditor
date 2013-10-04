@@ -16,45 +16,41 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+import util.MyPaneInterface;
+
 public class MyTabbedPane extends JTabbedPane {
 	
 	private MyGui parent;
-	
-	protected ArrayList<MyWritePane> writePanes;
-	protected ArrayList<Integer> writePaneIndices;
+	private MouseListener mouseListener;
+	protected ArrayList<MyPaneInterface> myPanes;
 	
 	public MyTabbedPane(MyGui gui) {
 		super();
 		this.parent = gui;
-		this.writePanes = new ArrayList<MyWritePane>();
-		this.writePaneIndices = new ArrayList<Integer>();
+		this.myPanes = new ArrayList<MyPaneInterface>();
 	}
 	
 	public MyTabbedPane(int tabPlacement, MyGui gui) {
 		super(tabPlacement);
 		this.parent = gui;
-		this.writePanes = new ArrayList<MyWritePane>();
-		this.writePaneIndices = new ArrayList<Integer>();
+		this.myPanes = new ArrayList<MyPaneInterface>();
 	}
 	
 	public MyTabbedPane(int tabPlacement, int tabLayoutPolicy, MyGui gui) {
 		super(tabPlacement, tabLayoutPolicy);
 		this.parent = gui;
-		this.writePanes = new ArrayList<MyWritePane>();
-		this.writePaneIndices = new ArrayList<Integer>();
+		this.myPanes = new ArrayList<MyPaneInterface>();
 	}
 	
 	/*public void addTab(String title, Component component) {
@@ -84,14 +80,13 @@ public class MyTabbedPane extends JTabbedPane {
 	}
 	
 	public MyWritePane[] getWritePanes() {
-		return this.writePanes.toArray(new MyWritePane[0]);
+		return this.myPanes.toArray(new MyWritePane[0]);
 	}
 	
 	public int getIndexOfWritePane(File file) {
-		for (int i = 0; i < this.writePanes.size(); i++) {
-			if (file.getAbsolutePath().equals(writePanes.get(i).getFile().getAbsolutePath())) {
-				return this.writePaneIndices.get(i);
-			}
+		for (int i = 0; i < this.myPanes.size(); i++) {
+			if (myPanes.get(i) instanceof MyWritePane && ((MyWritePane) myPanes.get(i)).getFile().getAbsolutePath().equals(file.getAbsolutePath()))
+				return i;
 		}
 		return -1;
 	}
@@ -106,8 +101,8 @@ public class MyTabbedPane extends JTabbedPane {
 				text += (char) c;
 			}
 			MyWritePane writePane = new MyWritePane(text, file);
-			this.writePanes.add(writePane);
-			this.writePaneIndices.add(this.getTabCount());
+			writePane.addMouseListener(this.mouseListener);
+			this.myPanes.add(writePane);
 			this.addTab(file.getName(), writePane);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -117,16 +112,28 @@ public class MyTabbedPane extends JTabbedPane {
 	}
 	
 	public void saveAll() {
-		for (MyWritePane writePane : this.writePanes) {
+		for (MyPaneInterface writePane : this.myPanes) {
 			writePane.save();
 		}
+	}
+	
+	@Override
+	public void remove(int index) {
+		this.myPanes.remove(index);
+		super.remove(index);
+	}
+	
+	@Override
+	public void remove(Component c) {
+		/* TODO -- make same as remove(int) */
+		super.remove(c);
 	}
 		
 	private class TabElement extends JPanel{
 		
 		private final JTabbedPane pane;
 		
-		public TabElement(final JTabbedPane pane) {
+		public TabElement(final MyTabbedPane pane) {
 			super(new FlowLayout(FlowLayout.LEFT, 0, 0));
 			if (pane == null) {
 	            throw new NullPointerException("TabbedPane is null");

@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,6 +22,7 @@ public class MyGui implements ChangeListener {
 	private Container content;
 	private JPanel mainPanel;
 	
+	private File startingDir;
 	
 	//MyClasses
 	//MyBarPane menuBar;
@@ -29,7 +31,9 @@ public class MyGui implements ChangeListener {
 	private MyMenuPane menuBar;
 	private MyTabbedPane tabPane;
 	
-	public MyGui(String name) {
+	public MyGui(String name, File startingDir) {
+		
+		this.startingDir = startingDir;
 		
 		this.mainFrame = new JFrame(name);
 		this.content = this.mainFrame.getContentPane();
@@ -66,7 +70,7 @@ public class MyGui implements ChangeListener {
 		this.mainPanel.add(this.tabPane, gbc);
 		
 		gbc = new GridBagConstraints();
-		this.packExplo = new MyPackagePane(new java.io.File("D:\\Users\\Microsoft Anwender\\Test"), this);
+		this.packExplo = new MyPackagePane(startingDir, this);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridheight = 2;
@@ -109,5 +113,9 @@ public class MyGui implements ChangeListener {
 	
 	public MyPackagePane getPackageExplorer() {
 		return this.packExplo;
+	}
+	
+	public File getStartingDirectory() {
+		return this.startingDir;
 	}
 }
