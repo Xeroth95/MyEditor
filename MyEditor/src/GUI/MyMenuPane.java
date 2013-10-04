@@ -18,15 +18,15 @@ import util.MyMenuItem;
 public class MyMenuPane extends JMenuBar implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	
-	JFrame parent;
+	MyGui parent;
 	JTabbedPane tabPane;
 	
 	JMenu currentMenu;
 	
-	public MyMenuPane(JFrame parent, MyTabbedPane tabPane) {
+	public MyMenuPane(MyGui gui) {
 		super();
-		this.parent = parent;
-		this.tabPane = tabPane;
+		this.parent = gui;
+		this.tabPane = gui.getTabPane();
 	}
 	
 	public void addMenu(JMenu menu) {
@@ -57,7 +57,7 @@ public class MyMenuPane extends JMenuBar implements ActionListener{
 	public void actionPerformed(ActionEvent object) {
 		Object o = object.getSource();
 		if (o instanceof MyMenuItem) {
-			((MyMenuItem) o).execute(this.tabPane);
+			((MyMenuItem) o).execute(this.parent);
 		}
 	}
 }

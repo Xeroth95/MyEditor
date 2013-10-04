@@ -2,6 +2,9 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 
 import javax.swing.JPanel;
@@ -12,9 +15,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import util.FileOpener;
+import util.MyFileOpener;
 
-public class MyPackagePane extends JPanel implements TreeSelectionListener {
+public class MyPackagePane extends JPanel implements MouseListener {
 	private static final long serialVersionUID = 1L;
 
 	JTree packExplo;
@@ -31,7 +34,7 @@ public class MyPackagePane extends JPanel implements TreeSelectionListener {
 		this.openTabs();
 		this.packExplo = new JTree(top);
 		this.packExplo.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		this.packExplo.addTreeSelectionListener(this);
+		this.packExplo.addMouseListener(this);
 		this.add(packExplo, BorderLayout.CENTER);
 	}
 	
@@ -52,26 +55,49 @@ public class MyPackagePane extends JPanel implements TreeSelectionListener {
 		}
 	}
 	
-	private void openTabs() {
-		FileOpener opener = new FileOpener(parent.getTabPane());
-		opener.openAll(this.startingDir);
-	}
-	
-	public void valueChanged(TreeSelectionEvent e) {
-		TreePath treePath = e.getPath();
+	private File getFileFromTreePath(TreePath treePath) {
 		String path = this.startingDir.getAbsolutePath();
 		for (int i = 1; i < treePath.getPathCount(); i++) {
-			path += "\\" + treePath.getPathComponent(i).toString();
-			treePath = treePath.getParentPath();
+			path += "\\" + treePath.getPathComponent(i);
 		}
-		File toOpen = new File(path);
-		if (toOpen.isDirectory()) {
-			return;
-		} else {
-			
-		}
-		
+		File toReturn = new File(path);
+		if (toReturn.exists())
+			return toReturn;
+		return null;
 	}
+	
+	private void openTabs() {
+		/*MyFileOpener opener = new MyFileOpener(parent.getTabPane());
+		opener.openAll(this.startingDir);*/
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		int selRow = this.packExplo.getRowForLocation(e.getX(), e.getY());
+		if (selRow != -1) {
+			TreePath selPath = this.packExplo.getPathForLocation(e.getX(), e.getY());
+			File file = this.getFileFromTreePath(selPath);
+			int i = this.parent.getTabPane().getIndexOfWritePane(file);
+			if (i != -1 && e.getClickCount() == 1) {
+				this.parent.getTabPane().setSelectedIndex(i);
+			}
+			else if (i == -1 && e.getClickCount() == 2) {
+				this.parent.getTabPane().addWritePane(this.getFileFromTreePath(selPath));
+			}
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
 	
 	/*@Override
 	public void paintComponent(Graphics g) {

@@ -3,8 +3,10 @@ package GUI;
 import java.awt.BorderLayout;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -48,10 +50,17 @@ public class MyWritePane extends JPanel {
 		this.add(new JScrollPane(this.textPane), BorderLayout.CENTER);
 	}
 	
+	public File getFile() {
+		return this.myFile;
+	}
+	
 	public void save() {
 		if (this.myFile != null) {
+			BufferedWriter writer = null;
 			try {
-				new BufferedWriter(new FileWriter(this.myFile)).write(this.textPane.getText());
+				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.myFile), "utf-8"));
+				writer.write(this.textPane.getText());
+				writer.close();
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}

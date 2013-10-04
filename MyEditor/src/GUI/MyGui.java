@@ -78,7 +78,7 @@ public class MyGui implements ChangeListener {
 		gbc.insets = new Insets(5, 5, 5, 5);
 		this.mainPanel.add(this.packExplo, gbc);
 		
-		this.menuBar = MyMenuPaneFactory.builtDefault(mainFrame, tabPane);
+		this.menuBar = MyMenuPaneFactory.builtDefault(this);
 		
 		//this.content.add(new JScrollPane(this.console), BorderLayout.SOUTH);
 		//this.content.add(this.packExplo, BorderLayout.WEST);

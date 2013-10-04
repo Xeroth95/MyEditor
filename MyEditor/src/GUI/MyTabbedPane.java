@@ -11,6 +11,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -23,36 +31,95 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class MyTabbedPane extends JTabbedPane {
 	
-	MyGui parent;
+	private MyGui parent;
+	
+	protected ArrayList<MyWritePane> writePanes;
+	protected ArrayList<Integer> writePaneIndices;
 	
 	public MyTabbedPane(MyGui gui) {
 		super();
 		this.parent = gui;
+		this.writePanes = new ArrayList<MyWritePane>();
+		this.writePaneIndices = new ArrayList<Integer>();
 	}
 	
 	public MyTabbedPane(int tabPlacement, MyGui gui) {
 		super(tabPlacement);
 		this.parent = gui;
+		this.writePanes = new ArrayList<MyWritePane>();
+		this.writePaneIndices = new ArrayList<Integer>();
 	}
 	
 	public MyTabbedPane(int tabPlacement, int tabLayoutPolicy, MyGui gui) {
 		super(tabPlacement, tabLayoutPolicy);
 		this.parent = gui;
+		this.writePanes = new ArrayList<MyWritePane>();
+		this.writePaneIndices = new ArrayList<Integer>();
 	}
 	
-	public void addTab(String title, Component component) {
+	/*public void addTab(String title, Component component) {
+		if (component instanceof MyWritePane) writePanes.add((MyWritePane) component);
 		super.addTab(title, component);
 		this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
 	}
 	
 	public void addTab(String title, Icon icon, Component component) {
+		if (component instanceof MyWritePane) writePanes.add((MyWritePane) component);
 		super.addTab(title, icon, component);
 		this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
 	}
 	
 	public void addTab(String title, Icon icon, Component component, String tip) {
+		if (component instanceof MyWritePane) writePanes.add((MyWritePane) component);
 		super.addTab(title, icon, component, tip);
 		this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
+	}*/
+	
+	public void addWritePane(File file) {
+		if (file.isFile()) {
+			this.open(file);
+			this.setTabComponentAt(this.getTabCount()-1, new TabElement(this));
+			this.setSelectedIndex(this.getTabCount()-1);
+		}
+	}
+	
+	public MyWritePane[] getWritePanes() {
+		return this.writePanes.toArray(new MyWritePane[0]);
+	}
+	
+	public int getIndexOfWritePane(File file) {
+		for (int i = 0; i < this.writePanes.size(); i++) {
+			if (file.getAbsolutePath().equals(writePanes.get(i).getFile().getAbsolutePath())) {
+				return this.writePaneIndices.get(i);
+			}
+		}
+		return -1;
+	}
+	
+	private void open(File file) {
+		
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String text = "";
+			for (int c = reader.read(); c != -1; c = reader.read()) {
+				text += (char) c;
+			}
+			MyWritePane writePane = new MyWritePane(text, file);
+			this.writePanes.add(writePane);
+			this.writePaneIndices.add(this.getTabCount());
+			this.addTab(file.getName(), writePane);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		} finally {
+			try { reader.close(); } catch (IOException ioe) { ioe.printStackTrace(); }
+		}
+	}
+	
+	public void saveAll() {
+		for (MyWritePane writePane : this.writePanes) {
+			writePane.save();
+		}
 	}
 		
 	private class TabElement extends JPanel{
@@ -173,4 +240,5 @@ public class MyTabbedPane extends JTabbedPane {
 	        }
 	    };
 	}
+	
 }
