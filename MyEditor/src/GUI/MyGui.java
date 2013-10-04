@@ -17,17 +17,17 @@ import util.MyMenuPaneFactory;
 
 public class MyGui implements ChangeListener {
 	//javax.swing
-	JFrame mainFrame;
-	Container content;
-	JPanel mainPanel;
+	private JFrame mainFrame;
+	private Container content;
+	private JPanel mainPanel;
 	
 	
 	//MyClasses
 	//MyBarPane menuBar;
-	MyPackagePane packExplo;
-	MyWritePane console;
-	MyMenuPane menuBar;
-	MyTabbedPane tabPane;
+	private MyPackagePane packExplo;
+	private MyWritePane console;
+	private MyMenuPane menuBar;
+	private MyTabbedPane tabPane;
 	
 	public MyGui(String name) {
 		
@@ -40,20 +40,7 @@ public class MyGui implements ChangeListener {
 		GridBagConstraints gbc;
 		
 		gbc = new GridBagConstraints();
-		this.packExplo = new MyPackagePane(new java.io.File("D:\\Users\\Microsoft Anwender\\Test"));
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridheight = 2;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.weightx = 0.1;
-		gbc.weighty = 0.9;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		this.mainPanel.add(this.packExplo, gbc);
-		
-		gbc = new GridBagConstraints();
-		this.console = new MyWritePane();
+		this.console = new MyWritePane(this);
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		gbc.gridheight = 1;
@@ -66,7 +53,7 @@ public class MyGui implements ChangeListener {
 		this.mainPanel.add(new JScrollPane(this.console), gbc);
 		
 		gbc = new GridBagConstraints();
-		this.tabPane = new MyTabbedPane();
+		this.tabPane = new MyTabbedPane(this);
 		gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.gridheight = 2;
@@ -78,8 +65,20 @@ public class MyGui implements ChangeListener {
 		gbc.insets = new Insets(5, 5, 5, 5);
 		this.mainPanel.add(this.tabPane, gbc);
 		
+		gbc = new GridBagConstraints();
+		this.packExplo = new MyPackagePane(new java.io.File("D:\\Users\\Microsoft Anwender\\Test"), this);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridheight = 2;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.anchor = GridBagConstraints.CENTER;
+		gbc.weightx = 0.1;
+		gbc.weighty = 0.9;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		this.mainPanel.add(this.packExplo, gbc);
+		
 		this.menuBar = MyMenuPaneFactory.builtDefault(mainFrame, tabPane);
-		this.tabPane.addTab("Neu", new MyWritePane());
 		
 		//this.content.add(new JScrollPane(this.console), BorderLayout.SOUTH);
 		//this.content.add(this.packExplo, BorderLayout.WEST);
@@ -94,5 +93,21 @@ public class MyGui implements ChangeListener {
 	
 	public void stateChanged(ChangeEvent e) {
 		this.tabPane.getSelectedIndex();
+	}
+	
+	public MyTabbedPane getTabPane() {
+		return this.tabPane;
+	}
+	
+	public MyMenuPane getMenuBar() {
+		return this.menuBar;
+	}
+	
+	public MyWritePane getConsole() {
+		return this.console;
+	}
+	
+	public MyPackagePane getPackageExplorer() {
+		return this.packExplo;
 	}
 }

@@ -12,18 +12,23 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import util.FileOpener;
+
 public class MyPackagePane extends JPanel implements TreeSelectionListener {
 	private static final long serialVersionUID = 1L;
 
 	JTree packExplo;
 	File startingDir;
+	MyGui parent;
 	
-	public MyPackagePane(File directory) {
+	public MyPackagePane(File directory, MyGui gui) {
 		super();
+		this.parent = gui;
 		this.setLayout(new BorderLayout());
 		this.startingDir = directory;
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(directory.getName());
-		createNodes(top, directory);
+		this.createNodes(top, directory);
+		this.openTabs();
 		this.packExplo = new JTree(top);
 		this.packExplo.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.packExplo.addTreeSelectionListener(this);
@@ -45,6 +50,11 @@ public class MyPackagePane extends JPanel implements TreeSelectionListener {
 				createNodes(newParent, f);
 			}
 		}
+	}
+	
+	private void openTabs() {
+		FileOpener opener = new FileOpener(parent.getTabPane());
+		opener.openAll(this.startingDir);
 	}
 	
 	public void valueChanged(TreeSelectionEvent e) {

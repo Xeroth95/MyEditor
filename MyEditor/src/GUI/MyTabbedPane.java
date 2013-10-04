@@ -23,16 +23,21 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class MyTabbedPane extends JTabbedPane {
 	
-	public MyTabbedPane() {
+	MyGui parent;
+	
+	public MyTabbedPane(MyGui gui) {
 		super();
+		this.parent = gui;
 	}
 	
-	public MyTabbedPane(int tabPlacement) {
+	public MyTabbedPane(int tabPlacement, MyGui gui) {
 		super(tabPlacement);
+		this.parent = gui;
 	}
 	
-	public MyTabbedPane(int tabPlacement, int tabLayoutPolicy) {
+	public MyTabbedPane(int tabPlacement, int tabLayoutPolicy, MyGui gui) {
 		super(tabPlacement, tabLayoutPolicy);
+		this.parent = gui;
 	}
 	
 	public void addTab(String title, Component component) {

@@ -1,4 +1,4 @@
-package GUI;
+/*package GUI;
 
 import java.awt.BorderLayout;
 
@@ -33,3 +33,4 @@ public class MyBarPane extends JPanel{
 		return this.tabPane;
 	}
 }
+*/
