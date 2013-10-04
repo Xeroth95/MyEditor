@@ -71,7 +71,8 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 	private File getFileFromTreePath(TreePath treePath) {
 		String path = this.startingDir.getAbsolutePath();
 		for (int i = 1; i < treePath.getPathCount(); i++) {
-			path += "\\" + treePath.getPathComponent(i);
+			path += File.separatorChar;
+			path += treePath.getPathComponent(i);
 		}
 		File toReturn = new File(path);
 		if (toReturn.exists())
@@ -112,14 +113,18 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 		return toReturn;
 	}
 	
+	public File getCurrentFile() {
+		return this.currentDir;
+	}
+	
 	public void addToCurrent(String name) {
-		File newFile = new File(this.currentDir.getAbsolutePath() + "\\" + name);
-		if (newFile.isDirectory()) {
-			if (!newFile.mkdir()) {
+		File file = new File(this.currentDir.getAbsolutePath() + File.separatorChar + name);
+		if (file.isDirectory()) {
+			if (!file.mkdir()) {
 				JOptionPane.showMessageDialog(null, "Ordner konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
 				return;
 			} else {
-				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newFile.getName());
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
 				newNode.setAllowsChildren(true);
 				this.currentDirNode.add(newNode);
 				((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
@@ -128,12 +133,12 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 			}
 		} else {
 			try {
-				newFile.createNewFile();
+				file.createNewFile();
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "Datei konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(newFile.getName());
+			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
 			newNode.setAllowsChildren(false);
 			this.currentDirNode.add(newNode);
 			((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);

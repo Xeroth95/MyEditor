@@ -103,6 +103,10 @@ public class MyGui implements ChangeListener {
 		return this.tabPane;
 	}
 	
+	public JFrame getFrame() {
+		return this.mainFrame;
+	}
+	
 	public MyMenuPane getMenuBar() {
 		return this.menuBar;
 	}

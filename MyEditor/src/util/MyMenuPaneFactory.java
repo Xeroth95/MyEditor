@@ -2,12 +2,14 @@ package util;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -47,16 +49,16 @@ public class MyMenuPaneFactory {
 			JMenu add = new JMenu("Hinzufuegen");
 			{
 				MyMenuItem file = new MyMenuItem("Datei") { @Override public void execute(MyGui gui) {
-					String name = MyFileFactory.showAddDialog("Neue Datei erstellen...", "Wie soll die Datei heiﬂen ?");
-					if (name == null)
+					String result = MyFileFactory.showFileDialog("Eine Datei erstellen...", "Geben sie hier den Namen der Datei an :", gui.getFrame());
+					if (result == null)
 						return;
-					gui.getPackageExplorer().addToCurrent(name);
+					gui.getPackageExplorer().addToCurrent(result);
 				} };
 				MyMenuItem folder = new MyMenuItem("Ordner") {@Override public void execute(MyGui gui) {
-					String name = MyFileFactory.showAddDialog("Neuen Ordner erstellen...", "Wie soll der Ordner heiﬂen ?");
-					if (name == null)
+					String result = MyFileFactory.showFolderDialog("Einen Ordner erstellen...", "Geben sie hier den Namen des Ordners an : ", gui.getFrame());
+					if (result == null)
 						return;
-					gui.getPackageExplorer().addToCurrent(name);
+					gui.getPackageExplorer().addToCurrent(result);
 				} };
 				add.add(file);
 				add.add(folder);
@@ -92,5 +94,21 @@ public class MyMenuPaneFactory {
 			System.out.println(System.getProperty("user.dir"));
 		}
 		
+	}
+	
+	static class MyString {
+		String str;
+		
+		public MyString() {
+			this.str = null;
+		}
+		
+		public String get() {
+			return this.str;
+		}
+		
+		public void set(String str) {
+			this.str = str;
+		}
 	}
 }
