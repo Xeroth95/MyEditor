@@ -34,7 +34,7 @@ public class MyMenuPaneFactory {
 		{
 			MyMenuItem open = new MyMenuItem("Oeffnen...") { @Override public void execute(MyGui gui) {
 				final JFileChooser chooser = new JFileChooser(gui.getStartingDirectory());
-				//chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 				chooser.setAcceptAllFileFilterUsed(false);
 				FileNameExtensionFilter filter = new FileNameExtensionFilter("C- und Assemblerdateien", "c", "asm");
 				chooser.setFileFilter(filter);
@@ -52,13 +52,13 @@ public class MyMenuPaneFactory {
 					String result = MyFileFactory.showFileDialog("Eine Datei erstellen...", "Geben sie hier den Namen der Datei an :", gui.getFrame());
 					if (result == null)
 						return;
-					gui.getPackageExplorer().addToCurrent(result);
+					gui.getPackageExplorer().addFileToCurrent(result);
 				} };
 				MyMenuItem folder = new MyMenuItem("Ordner") {@Override public void execute(MyGui gui) {
 					String result = MyFileFactory.showFolderDialog("Einen Ordner erstellen...", "Geben sie hier den Namen des Ordners an : ", gui.getFrame());
 					if (result == null)
 						return;
-					gui.getPackageExplorer().addToCurrent(result);
+					gui.getPackageExplorer().addFolderToCurrent(result);
 				} };
 				add.add(file);
 				add.add(folder);
@@ -75,7 +75,7 @@ public class MyMenuPaneFactory {
 			
 			fileMenu.addSeparator();
 			
-			MyMenuItem exit = new MyMenuItem("Beenden...") { @Override public void execute(MyGui gui) {} };
+			MyMenuItem exit = new MyMenuItem("Beenden...") { @Override public void execute(MyGui gui) {System.exit(0);} };
 			fileMenu.add(exit);
 		}
 		toReturn.addMenu(fileMenu);

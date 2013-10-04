@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -16,9 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.UIManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -40,14 +43,16 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 		this.startingDir = directory;
 		this.currentDir = directory;
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(directory.getName());
+		top.setAllowsChildren(true);
 		this.createNodes(top, directory);
 		this.packExplo = new JTree(top);
+		this.packExplo.setCellRenderer(new MyTreeCellRenderer());
 		this.currentDirNode = top;
 		this.packExplo.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.packExplo.addMouseListener(this);
 		this.packExplo.addTreeSelectionListener(this);
 		this.packExplo.setComponentPopupMenu(this.getPopupMenu());
-		this.add(new JScrollPane(packExplo), BorderLayout.CENTER);
+		this.add(packExplo, BorderLayout.CENTER);
 	}
 	
 	private void createNodes(DefaultMutableTreeNode parent, File dir) {
@@ -117,34 +122,44 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 		return this.currentDir;
 	}
 	
-	public void addToCurrent(String name) {
+	public void addFileToCurrent(String name) {
 		File file = new File(this.currentDir.getAbsolutePath() + File.separatorChar + name);
-		if (file.isDirectory()) {
+		if (file.exists()) {
+			return;
+			//TODO ask the user wether it should be replaced
+		}
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Datei konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
+		newNode.setAllowsChildren(false);
+		this.currentDirNode.add(newNode);
+		((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
+		TreePath path = new TreePath(newNode.getPath());
+		this.packExplo.setSelectionPath(path);
+		this.parent.getTabPane().addWritePane(file);
+	}
+	
+	public void addFolderToCurrent(String name) {
+		File file = new File(this.currentDir.getAbsolutePath() + File.separatorChar + name);
+		if (file.exists()) {
+			return;
+			//TODO ask the user wether it should be replaced
+		} else {
 			if (!file.mkdir()) {
 				JOptionPane.showMessageDialog(null, "Ordner konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
-				return;
-			} else {
-				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
-				newNode.setAllowsChildren(true);
-				this.currentDirNode.add(newNode);
-				((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
-				TreePath path = new TreePath(newNode.getPath());
-				this.packExplo.setSelectionPath(path);
 			}
-		} else {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Datei konnte nicht erstellt werden!", "Error!", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
-			newNode.setAllowsChildren(false);
-			this.currentDirNode.add(newNode);
-			((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
-			TreePath path = new TreePath(newNode.getPath());
-			this.packExplo.setSelectionPath(path);
 		}
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(file.getName());
+		newNode.setAllowsChildren(true);
+		this.currentDirNode.add(newNode);
+		((DefaultTreeModel) this.packExplo.getModel()).reload(this.currentDirNode);
+		TreePath path = new TreePath(newNode.getPath());
+		this.packExplo.setSelectionPath(path);
+		this.parent.getTabPane().addWritePane(file);
 	}
 
 	@Override
@@ -186,6 +201,22 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 				this.currentDir = currentFile.getParentFile();
 				this.currentDirNode = (DefaultMutableTreeNode) e.getPath().getPathComponent(e.getPath().getPathCount()-2);
 			}
+		}
+	}
+	
+	private class MyTreeCellRenderer extends DefaultTreeCellRenderer {
+		@Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+			if (value instanceof DefaultMutableTreeNode) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+				if (node.getAllowsChildren()) {
+					setIcon(UIManager.getIcon("FileView.directoryIcon"));
+				} else {
+					setIcon(UIManager.getIcon("FileView.fileIcon"));
+				}
+			}
+			return this;
 		}
 	}
 }

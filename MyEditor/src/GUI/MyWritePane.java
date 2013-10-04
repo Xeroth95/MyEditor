@@ -1,19 +1,17 @@
 package GUI;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -21,6 +19,7 @@ import javax.swing.JTextPane;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.EditorKit;
 
+import util.MyMenuItem;
 import util.MyPaneInterface;
 
 public class MyWritePane extends JPanel implements MyPaneInterface {
@@ -85,12 +84,25 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 		paste.putValue(Action.NAME, "Einfuegen");
 		actions.add(paste);
 		
-		Action selectAll = this.textPane.getActionMap().get(DefaultEditorKit.selectAllAction);
+		Action save = new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				MyWritePane.this.save();
+			}
+			
+		};
+		save.putValue(Action.NAME, "Speichern");
+		actions.add(save);
+		
+		AbstractAction selectAll = (AbstractAction) this.textPane.getActionMap().get(DefaultEditorKit.selectAllAction);
 		/*if (selectAll == null) {
 			System.out.println("wuut");
 		} else
-			selectAll.putValue(Action.NAME, "Alles markieren");*/
+			*/
 		actions.add(selectAll);
+		
+		//TODO clearing wtf that is
 		
 		this.actions = actions.toArray(new Action[0]);
 	}

@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -39,60 +40,65 @@ public class MyGui implements ChangeListener {
 		this.content = this.mainFrame.getContentPane();
 		this.content.setLayout(new BorderLayout());
 		this.mainPanel = new JPanel();
-		this.mainPanel.setLayout(new GridBagLayout());
+		this.mainPanel.setLayout(new BorderLayout());
 		
-		GridBagConstraints gbc;
+		//GridBagConstraints gbc;
 		
-		gbc = new GridBagConstraints();
+		//gbc = new GridBagConstraints();
 		this.console = new MyWritePane(this);
-		gbc.gridx = 0;
+		/*gbc.gridx = 0;
 		gbc.gridy = 3;
 		gbc.gridheight = 1;
 		gbc.gridwidth = 3;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.CENTER;
 		gbc.weightx = 1;
-		gbc.weighty = 0.1;
+		gbc.weighty = 1;
 		gbc.insets = new Insets(5, 5, 5, 5);
-		this.mainPanel.add(new JScrollPane(this.console), gbc);
+		this.mainPanel.add(new JScrollPane(this.console), gbc);*/
+		JScrollPane scroll2 =  new JScrollPane(this.console);
+		this.mainPanel.add(scroll2, BorderLayout.SOUTH);
 		
-		gbc = new GridBagConstraints();
+		//gbc = new GridBagConstraints();
 		this.tabPane = new MyTabbedPane(this);
-		gbc.gridx = 1;
+		/*gbc.gridx = 1;
 		gbc.gridy = 0;
 		gbc.gridheight = 2;
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.weightx = 0.9;
-		gbc.weighty = 0.9;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
 		gbc.insets = new Insets(5, 5, 5, 5);
-		this.mainPanel.add(this.tabPane, gbc);
+		this.mainPanel.add(this.tabPane, gbc);*/
+		this.mainPanel.add(this.tabPane, BorderLayout.CENTER);
 		
-		gbc = new GridBagConstraints();
+		//gbc = new GridBagConstraints();
 		this.packExplo = new MyPackagePane(startingDir, this);
-		gbc.gridx = 0;
+		/*gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridheight = 2;
 		gbc.gridwidth = 1;
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.weightx = 0.1;
-		gbc.weighty = 0.9;
+		gbc.weightx = 1;
+		gbc.weighty = 1;
 		gbc.insets = new Insets(5, 5, 5, 5);
-		this.mainPanel.add(this.packExplo, gbc);
+		JScrollPane pane = new JScrollPane(this.packExplo);
+		this.mainPanel.add(pane, gbc);*/
+		JScrollPane scroll = new JScrollPane(this.packExplo);
+		this.mainPanel.add(scroll, BorderLayout.WEST);
 		
 		this.menuBar = MyMenuPaneFactory.builtDefault(this);
 		
-		//this.content.add(new JScrollPane(this.console), BorderLayout.SOUTH);
-		//this.content.add(this.packExplo, BorderLayout.WEST);
 		this.content.add(this.menuBar, BorderLayout.NORTH);
-		//this.content.add(this.tabPane, BorderLayout.CENTER);
 		this.content.add(this.mainPanel, BorderLayout.CENTER);
 
 		this.mainFrame.setSize(800, 600);
 		this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.mainFrame.setVisible(true);
+		scroll.setPreferredSize(new Dimension(this.mainFrame.getWidth()/6, 5*this.mainFrame.getHeight()/6));
+		scroll2.setPreferredSize(new Dimension(this.mainFrame.getWidth(), this.mainFrame.getHeight()/6));
 	}
 	
 	public void stateChanged(ChangeEvent e) {
