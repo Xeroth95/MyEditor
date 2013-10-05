@@ -36,23 +36,29 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 	private DefaultMutableTreeNode currentDirNode, currentNode;
 	private MyGui parent;
 	
-	public MyPackagePane(File directory, MyGui gui) {
+	public MyPackagePane(MyGui gui) {
 		super();
 		this.parent = gui;
 		this.setLayout(new BorderLayout());
-		this.startingDir = directory;
-		this.currentDir = directory;
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode(directory.getName());
-		top.setAllowsChildren(true);
-		this.createNodes(top, directory);
-		this.packExplo = new JTree(top);
+		this.packExplo = new JTree((DefaultMutableTreeNode)null);
 		this.packExplo.setCellRenderer(new MyTreeCellRenderer());
-		this.currentDirNode = top;
 		this.packExplo.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		this.packExplo.addMouseListener(this);
 		this.packExplo.addTreeSelectionListener(this);
 		this.packExplo.setComponentPopupMenu(this.getPopupMenu());
 		this.add(packExplo, BorderLayout.CENTER);
+	}
+	
+	public void open(File directory, String name) {
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode(name);
+		this.parent.setCurrentDir(directory);
+		top.setAllowsChildren(true);
+		this.createNodes(top, directory);
+		this.currentDirNode = top;
+		this.startingDir = directory;
+		this.currentDir = directory;
+		((DefaultTreeModel)this.packExplo.getModel()).setRoot(top);
+		((DefaultTreeModel)this.packExplo.getModel()).reload(top);
 	}
 	
 	private void createNodes(DefaultMutableTreeNode parent, File dir) {
@@ -86,6 +92,8 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 	}
 	
 	private JPopupMenu getPopupMenu() {
+		if (this.packExplo.isSelectionEmpty())
+			return null;
 		JPopupMenu toReturn = new JPopupMenu();
 		
 		Action delete = new AbstractAction() {

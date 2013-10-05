@@ -23,7 +23,7 @@ public class MyGui implements ChangeListener {
 	private Container content;
 	private JPanel mainPanel;
 	
-	private File startingDir;
+	private File currentDir, savingFile;
 	
 	//MyClasses
 	//MyBarPane menuBar;
@@ -32,9 +32,9 @@ public class MyGui implements ChangeListener {
 	private MyMenuPane menuBar;
 	private MyTabbedPane tabPane;
 	
-	public MyGui(String name, File startingDir) {
+	public MyGui(String name) {
 		
-		this.startingDir = startingDir;
+		this.currentDir = null;
 		
 		this.mainFrame = new JFrame(name);
 		this.content = this.mainFrame.getContentPane();
@@ -74,7 +74,7 @@ public class MyGui implements ChangeListener {
 		this.mainPanel.add(this.tabPane, BorderLayout.CENTER);
 		
 		//gbc = new GridBagConstraints();
-		this.packExplo = new MyPackagePane(startingDir, this);
+		this.packExplo = new MyPackagePane(this);
 		/*gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.gridheight = 2;
@@ -125,7 +125,19 @@ public class MyGui implements ChangeListener {
 		return this.packExplo;
 	}
 	
-	public File getStartingDirectory() {
-		return this.startingDir;
+	public File getCurrentDirectory() {
+		return this.currentDir;
+	}
+	
+	public void setSavingFile(File savingFile) {
+		this.savingFile = savingFile;
+	}
+	
+	public File getSavingFile() {
+		return this.savingFile;
+	}
+
+	public void setCurrentDir(File directory) {
+		this.currentDir = directory;
 	}
 }
