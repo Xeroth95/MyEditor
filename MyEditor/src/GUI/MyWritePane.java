@@ -156,12 +156,8 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 		actions.add(new JMenuItem(save));
 		
 		AbstractAction selectAll = (AbstractAction) this.textPane.getActionMap().get(DefaultEditorKit.selectAllAction);
-		/*if (selectAll == null) {
-			System.out.println("wuut");
-		} else
-			*/
-		actions.add(new JMenuItem(selectAll));
 		
+		actions.add(new JMenuItem(selectAll));
 		//TODO clearing wtf that is
 		
 		this.actions = actions.toArray(new JMenuItem[0]);

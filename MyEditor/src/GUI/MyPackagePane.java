@@ -50,6 +50,7 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 	}
 	
 	public void open(File directory, String name) {
+		this.parent.getTabPane().closeAllCurrent();
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode(name);
 		this.parent.setCurrentDir(directory);
 		top.setAllowsChildren(true);
@@ -113,7 +114,7 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 			public void actionPerformed(ActionEvent e) {
 				if (MyPackagePane.this.currentFile != null) {
 					if (!deleteDir(MyPackagePane.this.currentFile)) {
-						JOptionPane.showMessageDialog(null, ((MyPackagePane.this.currentFile.isDirectory()) ? "Der Ordner " : "Die Datei ") + "konnte nicht gelöscht werden!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, ((MyPackagePane.this.currentFile.isDirectory()) ? "Der Ordner " : "Die Datei ") + "konnte nicht gelï¿½scht werden!", "Fehler!", JOptionPane.ERROR_MESSAGE);
 					} else {
 						DefaultTreeModel model = (DefaultTreeModel) MyPackagePane.this.packExplo.getModel();
 						model.removeNodeFromParent(MyPackagePane.this.currentNode);
@@ -122,7 +123,7 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 			}
 			
 		};
-		delete.putValue(Action.NAME, "Löschen");
+		delete.putValue(Action.NAME, "Lï¿½schen");
 		toReturn.add(delete);
 		
 		return toReturn;

@@ -53,6 +53,12 @@ public class MyTabbedPane extends JTabbedPane {
 		this.myPanes = new ArrayList<MyPaneInterface>();
 	}
 	
+	public void closeAllCurrent() {
+		System.out.println(this.getTabRunCount());
+		while (this.getTabRunCount() > 0)
+			this.remove(0);
+	}
+	
 	/*public void addTab(String title, Component component) {
 		if (component instanceof MyWritePane) writePanes.add((MyWritePane) component);
 		super.addTab(title, component);

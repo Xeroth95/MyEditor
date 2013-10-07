@@ -16,9 +16,24 @@ import GUI.MyGui;
 
 public class MyCompiler {
 	static MyGui gui;
+	static String path;
+	static File gcc;
+	static File nasm;
+	
 	
 	public static void setGui(MyGui gui) {
 		MyCompiler.gui = gui;
+		if (gui.getSystem().matches("linux")) {
+			MyCompiler.path = "linux/";
+		} if (gui.getSystem().matches("win.*")) {
+			MyCompiler.path = "win/";
+		}
+		
+		try {
+			MyCompiler.gcc = new File(MyCompiler.class.getClassLoader().getResource(path + "gcc").toURI().getPath());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static File assemble(File toAssemble) throws IOException {
@@ -38,15 +53,10 @@ public class MyCompiler {
 	}
 	
 	private static File compile(File toCompile) throws IOException {
-		File f = null;
-		try {
-			f = new File(MyCompiler.class.getClassLoader().getResource("gcc-win.exe").toURI().getPath());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		
 		File objectFile = new File(toCompile.getPath().substring(0, toCompile.getPath().indexOf(".c")) + ".o");
-		String cmd = "\"" + f.getPath() + "\" -o -f win32 \"" + objectFile.getPath() + "\" -c " + toCompile.getName();
-		Process p = Runtime.getRuntime().exec(cmd, null, toCompile.getParentFile());
+		String cmd = MyCompiler.gcc.getPath() + "/gcc -o " + objectFile.getPath() + "\" -c " + toCompile.getPath();
+		Process p = Runtime.getRuntime().exec(cmd, null, gcc);
 		new Thread(new SyncPipe(p.getErrorStream(), gui.getConsoleStream())).start();
 	    new Thread(new SyncPipe(p.getInputStream(), gui.getConsoleStream())).start();
 	    p.destroy();

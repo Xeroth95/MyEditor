@@ -25,7 +25,7 @@ public class MyGui implements ChangeListener {
 	private JFrame mainFrame;
 	private Container content;
 	private JPanel mainPanel;
-	
+	private String  os;
 	private File currentDir, savingFile;
 	
 	//MyClasses
@@ -45,6 +45,8 @@ public class MyGui implements ChangeListener {
 		this.mainPanel = new JPanel();
 		this.mainPanel.setLayout(new BorderLayout());
 		
+		
+		this.os = System.getProperty("os.name").toLowerCase();
 		//GridBagConstraints gbc;
 		
 		//gbc = new GridBagConstraints();
@@ -150,5 +152,9 @@ public class MyGui implements ChangeListener {
 	
 	public OutputStream getConsoleStream() {
 		return this.console.getOutputStream();
+	}
+	
+	public String getSystem() {
+		return this.os;
 	}
 }
