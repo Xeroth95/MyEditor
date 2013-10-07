@@ -92,8 +92,8 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 	}
 	
 	private JPopupMenu getPopupMenu() {
-		if (this.packExplo.isSelectionEmpty())
-			return null;
+		/*if (this.packExplo.isSelectionEmpty())
+			return null;*/
 		JPopupMenu toReturn = new JPopupMenu();
 		
 		Action delete = new AbstractAction() {
@@ -111,11 +111,13 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!deleteDir(MyPackagePane.this.currentFile)) {
-					JOptionPane.showMessageDialog(null, ((MyPackagePane.this.currentFile.isDirectory()) ? "Der Ordner " : "Die Datei ") + "konnte nicht gelöscht werden!", "Fehler!", JOptionPane.ERROR_MESSAGE);
-				} else {
-					DefaultTreeModel model = (DefaultTreeModel) MyPackagePane.this.packExplo.getModel();
-					model.removeNodeFromParent(MyPackagePane.this.currentNode);
+				if (MyPackagePane.this.currentFile != null) {
+					if (!deleteDir(MyPackagePane.this.currentFile)) {
+						JOptionPane.showMessageDialog(null, ((MyPackagePane.this.currentFile.isDirectory()) ? "Der Ordner " : "Die Datei ") + "konnte nicht gelöscht werden!", "Fehler!", JOptionPane.ERROR_MESSAGE);
+					} else {
+						DefaultTreeModel model = (DefaultTreeModel) MyPackagePane.this.packExplo.getModel();
+						model.removeNodeFromParent(MyPackagePane.this.currentNode);
+					}
 				}
 			}
 			
@@ -226,5 +228,10 @@ public class MyPackagePane extends JPanel implements MouseListener, TreeSelectio
 			}
 			return this;
 		}
+	}
+	
+	@Override
+	public JPopupMenu getComponentPopupMenu() {
+		return null;
 	}
 }

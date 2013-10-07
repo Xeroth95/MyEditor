@@ -6,17 +6,22 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 
 import util.MyMenuItem;
@@ -25,11 +30,12 @@ import util.MyPaneInterface;
 public class MyWritePane extends JPanel implements MyPaneInterface {
 	private static final long serialVersionUID = 1L;
 
-	JTextPane textPane;
-	EditorKit editor;
-	MyGui parent;
-	File myFile;
-	Action[] actions;
+	private JTextPane textPane;
+	private EditorKit editor;
+	private MyGui parent;
+	private File myFile;
+	private JMenuItem[] actions;
+	private OutputStream os;
 	
 	public MyWritePane() {
 		super();
@@ -41,6 +47,24 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 		this.setupActions();
 		this.textPane.setComponentPopupMenu(this.getPopupMenu());
 		this.add(scroll, BorderLayout.CENTER);
+		this.os = new OutputStream() {
+
+			@Override
+		      public void write(final int b) throws IOException {
+		        update(String.valueOf((char) b));
+		      }
+
+		      @Override
+		      public void write(byte[] b, int off, int len) throws IOException {
+		    	  update(new String(b, off, len));
+		      }
+
+		      @Override
+		      public void write(byte[] b) throws IOException {
+		        write(b, 0, b.length);
+		      }
+			
+		};
 	}
 	
 	public MyWritePane(MyGui gui) {
@@ -53,6 +77,24 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 		this.setupActions();
 		this.textPane.setComponentPopupMenu(this.getPopupMenu());
 		this.add(scroll, BorderLayout.CENTER);
+		this.os = new OutputStream() {
+
+			@Override
+		      public void write(final int b) throws IOException {
+		        update(String.valueOf((char) b));
+		      }
+
+		      @Override
+		      public void write(byte[] b, int off, int len) throws IOException {
+		    	  update(new String(b, off, len));
+		      }
+
+		      @Override
+		      public void write(byte[] b) throws IOException {
+		        write(b, 0, b.length);
+		      }
+			
+		};
 	}
 	
 	public MyWritePane(String s, File myFile) {
@@ -67,22 +109,40 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 		this.setupActions();
 		this.textPane.setComponentPopupMenu(this.getPopupMenu());
 		this.add(scroll, BorderLayout.CENTER);
+		this.os = new OutputStream() {
+
+			@Override
+		      public void write(final int b) throws IOException {
+		        update(String.valueOf((char) b));
+		      }
+
+		      @Override
+		      public void write(byte[] b, int off, int len) throws IOException {
+		    	  update(new String(b, off, len));
+		      }
+
+		      @Override
+		      public void write(byte[] b) throws IOException {
+		        write(b, 0, b.length);
+		      }
+			
+		};
 	}
 	
 	private void setupActions() {
-		ArrayList<Action> actions = new ArrayList<Action>();
+		ArrayList<JMenuItem> actions = new ArrayList<JMenuItem>();
 		
 		Action cut = new DefaultEditorKit.CutAction();
 		cut.putValue(Action.NAME, "Ausschneiden");
-		actions.add(cut);
+		actions.add(new JMenuItem(cut));
 		
 		Action copy = new DefaultEditorKit.CopyAction();
 		copy.putValue(Action.NAME, "Kopieren");
-		actions.add(copy);
+		actions.add(new JMenuItem(copy));
 		
 		Action paste = new DefaultEditorKit.PasteAction();
 		paste.putValue(Action.NAME, "Einfuegen");
-		actions.add(paste);
+		actions.add(new JMenuItem(paste));
 		
 		Action save = new AbstractAction() {
 
@@ -93,18 +153,18 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 			
 		};
 		save.putValue(Action.NAME, "Speichern");
-		actions.add(save);
+		actions.add(new JMenuItem(save));
 		
 		AbstractAction selectAll = (AbstractAction) this.textPane.getActionMap().get(DefaultEditorKit.selectAllAction);
 		/*if (selectAll == null) {
 			System.out.println("wuut");
 		} else
 			*/
-		actions.add(selectAll);
+		actions.add(new JMenuItem(selectAll));
 		
 		//TODO clearing wtf that is
 		
-		this.actions = actions.toArray(new Action[0]);
+		this.actions = actions.toArray(new JMenuItem[0]);
 	}
 	
 	public File getFile() {
@@ -142,5 +202,27 @@ public class MyWritePane extends JPanel implements MyPaneInterface {
 			toReturn.add(actions[i]);
 		}
 		return toReturn;
+	}
+	
+	public void update(final String text) {
+		SwingUtilities.invokeLater(new Runnable() {
+		      public void run() {
+		        Document doc = MyWritePane.this.textPane.getDocument();
+		        try {
+		          doc.insertString(doc.getLength(), text, null);
+		        } catch (BadLocationException e) {
+		          throw new RuntimeException(e);
+		        }
+		        MyWritePane.this.textPane.setCaretPosition(doc.getLength() - 1);
+		      }
+		    });
+	}
+	
+	public OutputStream getOutputStream() {
+		return this.os;
+	}
+	
+	public void setEditable(boolean enable) {
+		this.textPane.setEditable(enable);
 	}
 }

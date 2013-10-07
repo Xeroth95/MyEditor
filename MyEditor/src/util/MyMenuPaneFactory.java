@@ -191,25 +191,52 @@ public class MyMenuPaneFactory {
 			
 			fileMenu.addSeparator();
 			
+			MyMenuItem compile = new MyMenuItem("Kompilieren...") {
+
+				@Override
+				public void execute(MyGui gui) {
+					File output;
+					JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					chooser.setAcceptAllFileFilterUsed(false);
+					chooser.setFileFilter(new FileNameExtensionFilter("Executables", "exe"));
+					chooser.setApproveButtonText("Kompilieren");
+					chooser.setApproveButtonToolTipText("Klicken Sie hier um das Projekt zu kompilieren.");
+					chooser.setDialogTitle("Kompilieren nach");
+					if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+						if (!chooser.getSelectedFile().exists()) {
+							output = chooser.getSelectedFile();
+							if (!output.getAbsolutePath().endsWith(".exe")) {
+								output = new File(output.getAbsolutePath() + ".exe");
+							}
+							try {
+								output.createNewFile();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						} else {
+							int option = JOptionPane.showConfirmDialog(null, "Möchten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft löschen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
+							if (option == JOptionPane.OK_OPTION)
+								output = chooser.getSelectedFile();
+							else
+								return;
+						}
+					} else
+						return;
+					MyLinker.getExecutable(output, gui);
+				}
+				
+			};
+			fileMenu.add(compile);
+			
+			fileMenu.addSeparator();
+			
 			MyMenuItem exit = new MyMenuItem("Beenden...") { @Override public void execute(MyGui gui) {System.exit(0);} };
 			fileMenu.add(exit);
 		}
 		toReturn.addMenu(fileMenu);
 		
 		return toReturn;
-	}
-	
-	static class myAction extends AbstractAction {
-
-		public myAction() {
-			super();
-			this.putValue(Action.NAME, "Neues Dokument...");
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			System.out.println(System.getProperty("user.dir"));
-		}
-		
 	}
 	
 	static class MyString {

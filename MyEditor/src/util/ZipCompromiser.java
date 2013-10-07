@@ -21,11 +21,6 @@ public class ZipCompromiser {
 	static File root;
 	private static final byte[] buffer = new byte[8192];
 	
-    public static void main(String[] args) {
-        zip(new File("D:\\Users\\Microsoft Anwender\\Test"), new File("D:\\Users\\Microsoft Anwender\\Test.zip"));
-        unzip(new File("D:\\Users\\Microsoft Anwender\\Test.zip"));
-    }
-    
     public static void zip(File input, File output) {
     	try {
     		root = input;
@@ -41,7 +36,7 @@ public class ZipCompromiser {
     	try {
 			ZipFile zin = new ZipFile(input);
 			File output = Files.createTempDirectory(null).toFile();
-			System.out.println(output.getAbsolutePath());
+			output.deleteOnExit();
 			for ( ZipEntry entry : Collections.list( zin.entries() ) )
 	        {
 	          extractEntry( zin, entry, output.getAbsolutePath() );

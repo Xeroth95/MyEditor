@@ -7,6 +7,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import util.MyCompiler;
 import util.MyMenuPaneFactory;
 
 public class MyGui implements ChangeListener {
@@ -99,6 +102,10 @@ public class MyGui implements ChangeListener {
 		this.mainFrame.setVisible(true);
 		scroll.setPreferredSize(new Dimension(this.mainFrame.getWidth()/6, 5*this.mainFrame.getHeight()/6));
 		scroll2.setPreferredSize(new Dimension(this.mainFrame.getWidth(), this.mainFrame.getHeight()/6));
+		
+		this.console.setEditable(false);
+		MyCompiler.setGui(this);
+		System.setOut(new PrintStream(this.console.getOutputStream()));
 	}
 	
 	public void stateChanged(ChangeEvent e) {
@@ -139,5 +146,9 @@ public class MyGui implements ChangeListener {
 
 	public void setCurrentDir(File directory) {
 		this.currentDir = directory;
+	}
+	
+	public OutputStream getConsoleStream() {
+		return this.console.getOutputStream();
 	}
 }
