@@ -19,14 +19,16 @@ public class MyCompiler {
 	static String path;
 	static File gcc;
 	static File nasm;
-	
+	static String format;
 	
 	public static void setGui(MyGui gui) {
 		MyCompiler.gui = gui;
 		if (gui.getSystem().matches("linux")) {
 			MyCompiler.path = "linux/";
+			MyCompiler.format = "coff";
 		} if (gui.getSystem().matches("win.*")) {
 			MyCompiler.path = "win/";
+			MyCompiler.format = "win32";
 		}
 		
 		try {
@@ -37,17 +39,11 @@ public class MyCompiler {
 	}
 	
 	private static File assemble(File toAssemble) throws IOException {
-		File f = null;
-		try {
-			f = new File(MyCompiler.class.getClassLoader().getResource("nasm-win.exe").toURI().getPath());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
 		File objectFile = new File(toAssemble.getPath().substring(0, toAssemble.getPath().indexOf(".asm")) + "1.o");
-		String cmd = "\"" + f.getPath() + "\" -o \"" + objectFile.getPath() + "\" -f win32 " + toAssemble.getName();
+		String cmd = "\"" + MyCompiler.nasm.getPath() + "\" -o \"" + objectFile.getPath() + "\" -f + "+ MyCompiler.format + " " + toAssemble.getName();
 		Process p = Runtime.getRuntime().exec(cmd, null, toAssemble.getParentFile());
-		new Thread(new SyncPipe(p.getErrorStream(), gui.getConsoleStream())).start();
-	    new Thread(new SyncPipe(p.getInputStream(), gui.getConsoleStream())).start();
+		new Thread(new SyncPipe(p.getErrorStream(), MyCompiler.gui.getConsoleStream())).start();
+	    new Thread(new SyncPipe(p.getInputStream(), MyCompiler.gui.getConsoleStream())).start();
 		p.destroy();
 		return objectFile;
 	}
@@ -57,8 +53,8 @@ public class MyCompiler {
 		File objectFile = new File(toCompile.getPath().substring(0, toCompile.getPath().indexOf(".c")) + ".o");
 		String cmd = MyCompiler.gcc.getPath() + "/gcc -o " + objectFile.getPath() + "\" -c " + toCompile.getPath();
 		Process p = Runtime.getRuntime().exec(cmd, null, gcc);
-		new Thread(new SyncPipe(p.getErrorStream(), gui.getConsoleStream())).start();
-	    new Thread(new SyncPipe(p.getInputStream(), gui.getConsoleStream())).start();
+		new Thread(new SyncPipe(p.getErrorStream(), MyCompiler.gui.getConsoleStream())).start();
+	    new Thread(new SyncPipe(p.getInputStream(), MyCompiler.gui.getConsoleStream())).start();
 	    p.destroy();
 	    return objectFile;
 	}

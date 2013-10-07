@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import GUI.MyGui;
 
 public class MyLinker {
+	
+	protected static MyGui gui;
+	protected static File compiler, assembler, linker;
+	protected static String path, format;
+	
 	public static void getExecutable(File output, MyGui gui) {
 		File dir = gui.getCurrentDirectory();
 		ArrayList<File> files = new ArrayList<File>();
@@ -67,6 +72,63 @@ public class MyLinker {
 					files.add(f);
 		}
 	}
+	
+	public static void init(MyGui gui) {
+		MyLinker.gui = gui;
+		if (gui.getSystem().matches("linux")) {
+			MyLinker.path = "linux/";
+			MyLinker.format = "coff";
+		} if (gui.getSystem().matches("win.*")) {
+			MyLinker.path = "win/";
+			MyLinker.format = "win32";
+		}
+		
+		try {
+			MyLinker.compiler = new File(MyCompiler.class.getClassLoader().getResource(path + "gcc").toURI().getPath());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static class MyCompiler {
+		
+		private static File assemble(File toAssemble) throws IOException {
+			File objectFile = new File(toAssemble.getPath().substring(0, toAssemble.getPath().indexOf(".asm")) + "1.o");
+			String cmd = "\"" + MyLinker.assembler.getPath() + "\" -o \"" + objectFile.getPath() + "\" -f + "+ MyLinker.format + " " + toAssemble.getName();
+			Process p = Runtime.getRuntime().exec(cmd, null, toAssemble.getParentFile());
+			new Thread(new SyncPipe(p.getErrorStream(), MyLinker.gui.getConsoleStream())).start();
+		    new Thread(new SyncPipe(p.getInputStream(), MyLinker.gui.getConsoleStream())).start();
+			p.destroy();
+			return objectFile;
+		}
+		
+		private static File compile(File toCompile) throws IOException {
+			
+			File objectFile = new File(toCompile.getPath().substring(0, toCompile.getPath().indexOf(".c")) + ".o");
+			String cmd = MyLinker.compiler.getPath() + "/gcc -o " + objectFile.getPath() + "\" -c " + toCompile.getPath();
+			Process p = Runtime.getRuntime().exec(cmd, null, MyLinker.compiler);
+			new Thread(new SyncPipe(p.getErrorStream(), MyLinker.gui.getConsoleStream())).start();
+		    new Thread(new SyncPipe(p.getInputStream(), MyLinker.gui.getConsoleStream())).start();
+		    p.destroy();
+		    return objectFile;
+		}
+		
+		public static File getObjectFile(File toCompile) {
+			try {
+				if (toCompile.getName().endsWith(".asm")) {
+					return assemble(toCompile);
+				} else if (toCompile.getName().endsWith(".c")) {
+					return compile(toCompile);
+				} else {
+					return null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+
 	
 	private static class SyncPipe implements Runnable
 	{

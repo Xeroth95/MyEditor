@@ -3,9 +3,6 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -13,11 +10,11 @@ import java.io.PrintStream;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.MyCompiler;
+import util.MyLinker;
 import util.MyMenuPaneFactory;
 
 public class MyGui implements ChangeListener {
@@ -106,7 +103,7 @@ public class MyGui implements ChangeListener {
 		scroll2.setPreferredSize(new Dimension(this.mainFrame.getWidth(), this.mainFrame.getHeight()/6));
 		
 		this.console.setEditable(false);
-		MyCompiler.setGui(this);
+		MyLinker.init(this);
 		System.setOut(new PrintStream(this.console.getOutputStream()));
 	}
 	
