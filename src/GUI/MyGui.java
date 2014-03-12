@@ -77,15 +77,6 @@ public class MyGui implements ChangeListener {
 		
 		//gbc = new GridBagConstraints();
 		this.packExplo = new MyPackagePane(this);
-		/*gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridheight = 2;
-		gbc.gridwidth = 1;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.anchor = GridBagConstraints.CENTER;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.insets = new Insets(5, 5, 5, 5);
 		JScrollPane pane = new JScrollPane(this.packExplo);
 		this.mainPanel.add(pane, gbc);*/
 		JScrollPane scroll = new JScrollPane(this.packExplo);

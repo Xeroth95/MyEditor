@@ -28,256 +28,256 @@ import GUI.MyTabbedPane;
 import GUI.MyWritePane;
 
 public class MyMenuPaneFactory {
-	public static MyMenuPane builtDefault(MyGui gui) {
-		MyMenuPane toReturn = new MyMenuPane(gui);
-		final JMenu fileMenu = new JMenu("Datei");
-		{
-			MyMenuItem open = new MyMenuItem("Oeffnen...") { @Override public void execute(MyGui gui) {
-				final JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setAcceptAllFileFilterUsed(false);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
-				chooser.setFileFilter(filter);
-				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					if (chooser.getSelectedFile().exists()) {
-						File current = ZipCompromiser.unzip(chooser.getSelectedFile());
-						gui.setSavingFile(chooser.getSelectedFile());
-						gui.getPackageExplorer().open(current, chooser.getSelectedFile().getName());
-						setMenuEnabled(fileMenu);
-					} else
-						return;
-				} else 
-					return;
-			} };
-			fileMenu.add(open);
-			JMenu add = new JMenu("Neu");
-			{
-				MyMenuItem project = new MyMenuItem("Projekt") {
+    public static MyMenuPane builtDefault(MyGui gui) {
+	MyMenuPane toReturn = new MyMenuPane(gui);
+	final JMenu fileMenu = new JMenu("Datei");
+	{
+	    MyMenuItem open = new MyMenuItem("Oeffnen...") { @Override public void execute(MyGui gui) {
+		final JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
+		chooser.setFileFilter(filter);
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+		    if (chooser.getSelectedFile().exists()) {
+			File current = ZipCompromiser.unzip(chooser.getSelectedFile());
+			gui.setSavingFile(chooser.getSelectedFile());
+			gui.getPackageExplorer().open(current, chooser.getSelectedFile().getName());
+			setMenuEnabled(fileMenu);
+		    } else
+			return;
+		} else 
+		    return;
+	    } };
+	    fileMenu.add(open);
+	    JMenu add = new JMenu("Neu");
+	    {
+		MyMenuItem project = new MyMenuItem("Projekt") {
 
-					@Override
-					public void execute(MyGui gui) {
-						File project;
-						final JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
-						chooser.setDialogTitle("Projekt erstellen");
-						chooser.setApproveButtonText("Erstellen");
-						chooser.setApproveButtonMnemonic('\n');
-						chooser.setApproveButtonToolTipText("Klicken Sie hier um ein Projekt zu erstellen");
-						chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-						chooser.setAcceptAllFileFilterUsed(false);
-						FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
-						chooser.setFileFilter(filter);
-						if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-							if (!chooser.getSelectedFile().exists()) {
-								project = chooser.getSelectedFile();
-								if (!project.getAbsolutePath().endsWith(".project")) {
-									project = new File(project.getAbsolutePath() + ".project");
-								}
-								try {
-									project.createNewFile();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							} else {
-								int option = JOptionPane.showConfirmDialog(null, "Möchten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft löschen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
-								if (option == JOptionPane.OK_OPTION)
-									project = chooser.getSelectedFile();
-								else
-									return;
-							}
-						} else
-							return;
-						try {
-							gui.getPackageExplorer().open(Files.createTempDirectory(null).toFile(), project.getName());
-							gui.setSavingFile(project);
-							setMenuEnabled(fileMenu);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
+			@Override
+			public void execute(MyGui gui) {
+			    File project;
+			    final JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+			    chooser.setDialogTitle("Projekt erstellen");
+			    chooser.setApproveButtonText("Erstellen");
+			    chooser.setApproveButtonMnemonic('\n');
+			    chooser.setApproveButtonToolTipText("Klicken Sie hier um ein Projekt zu erstellen");
+			    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			    chooser.setAcceptAllFileFilterUsed(false);
+			    FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
+			    chooser.setFileFilter(filter);
+			    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				if (!chooser.getSelectedFile().exists()) {
+				    project = chooser.getSelectedFile();
+				    if (!project.getAbsolutePath().endsWith(".project")) {
+					project = new File(project.getAbsolutePath() + ".project");
+				    }
+				    try {
+					project.createNewFile();
+				    } catch (IOException e) {
+					e.printStackTrace();
+				    }
+				} else {
+				    int option = JOptionPane.showConfirmDialog(null, "M\u00F6chten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft l\u00F6schen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
+				    if (option == JOptionPane.OK_OPTION)
+					project = chooser.getSelectedFile();
+				    else
+					return;
+				}
+			    } else
+				return;
+			    try {
+				gui.getPackageExplorer().open(Files.createTempDirectory(null).toFile(), project.getName());
+				gui.setSavingFile(project);
+				setMenuEnabled(fileMenu);
+			    } catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			    }
+			}
 					
-				};
-				MyMenuItem file = new MyMenuItem("Datei") { @Override public void execute(MyGui gui) {
-					String result = MyFileFactory.showFileDialog("Eine Datei erstellen...", "Geben sie hier den Namen der Datei an :", gui.getFrame());
-					if (result == null || result.equals(""))
-						return;
-					gui.getPackageExplorer().addFileToCurrent(result);
-				} };
-				MyMenuItem folder = new MyMenuItem("Ordner") {@Override public void execute(MyGui gui) {
-					String result = MyFileFactory.showFolderDialog("Einen Ordner erstellen...", "Geben sie hier den Namen des Ordners an : ", gui.getFrame());
-					if (result == null || result.equals(""))
-						return;
-					gui.getPackageExplorer().addFolderToCurrent(result);
-				} };
-				add.add(project);
-				file.setEnabled(false);
-				add.add(file);
-				folder.setEnabled(false);
-				add.add(folder);
+		    };
+		MyMenuItem file = new MyMenuItem("Datei") { @Override public void execute(MyGui gui) {
+		    String result = MyFileFactory.showFileDialog("Eine Datei erstellen...", "Geben sie hier den Namen der Datei an :", gui.getFrame());
+		    if (result == null || result.equals(""))
+			return;
+		    gui.getPackageExplorer().addFileToCurrent(result);
+		} };
+		MyMenuItem folder = new MyMenuItem("Ordner") {@Override public void execute(MyGui gui) {
+		    String result = MyFileFactory.showFolderDialog("Einen Ordner erstellen...", "Geben sie hier den Namen des Ordners an : ", gui.getFrame());
+		    if (result == null || result.equals(""))
+			return;
+		    gui.getPackageExplorer().addFolderToCurrent(result);
+		} };
+		add.add(project);
+		file.setEnabled(false);
+		add.add(file);
+		folder.setEnabled(false);
+		add.add(folder);
+	    }
+			
+	    fileMenu.add(add);
+			
+	    fileMenu.addSeparator();
+			
+	    final JMenuItem save = new MyMenuItem("Speichern...") { @Override public void execute(MyGui gui) {
+		File toSave = gui.getSavingFile();
+		if (toSave == null) {
+		    final JFileChooser chooser = new JFileChooser(gui.getSavingFile());
+		    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		    chooser.setAcceptAllFileFilterUsed(false);
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
+		    chooser.setFileFilter(filter);
+		    if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+			if (!chooser.getSelectedFile().exists()) {
+			    toSave = chooser.getSelectedFile();
+			    if (!toSave.getAbsolutePath().endsWith(".project")) {
+				toSave = new File(toSave.getAbsolutePath() + ".project");
+			    }
+			    try {
+				toSave.createNewFile();
+			    } catch (IOException e) {
+				e.printStackTrace();
+			    }
+			} else {
+			    int option = JOptionPane.showConfirmDialog(null, "M\u00F6chten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft l\u00F6schen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
+			    if (option == JOptionPane.OK_OPTION)
+				toSave = chooser.getSelectedFile();
+			    else
+				return;
 			}
+		    } else
+			return;
+		    gui.setSavingFile(toSave);
+		}
+		gui.getTabPane().saveAll();
+		ZipCompromiser.zip(gui.getCurrentDirectory(), gui.getSavingFile());
+	    } };
+	    save.setEnabled(false);
+	    fileMenu.add(save);
+	    final JMenuItem saveAs = new MyMenuItem("Speichern unter...") { @Override public void execute(MyGui gui) {
+		File toSave;
+		final JFileChooser chooser = new JFileChooser(gui.getSavingFile());
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
+		chooser.setFileFilter(filter);
+		if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+		    if (!chooser.getSelectedFile().exists()) {
+			toSave = chooser.getSelectedFile();
+			if (!toSave.getAbsolutePath().endsWith(".project")) {
+			    toSave = new File(toSave.getAbsolutePath() + ".project");
+			}
+			try {
+			    toSave.createNewFile();
+			} catch (IOException e) {
+			    e.printStackTrace();
+			}
+		    } else {
+			int option = JOptionPane.showConfirmDialog(null, "M\u00F6chten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft l\u00F6schen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
+			if (option == JOptionPane.OK_OPTION)
+			    toSave = chooser.getSelectedFile();
+			else
+			    return;
+		    }
+		} else
+		    return;
+		gui.setSavingFile(toSave);
+		gui.getTabPane().saveAll();
+		ZipCompromiser.zip(gui.getCurrentDirectory(), gui.getSavingFile());
+	    } };
+	    saveAs.setEnabled(false);
+	    fileMenu.add(saveAs);
 			
-			fileMenu.add(add);
+	    fileMenu.addSeparator();
 			
-			fileMenu.addSeparator();
-			
-			final JMenuItem save = new MyMenuItem("Speichern...") { @Override public void execute(MyGui gui) {
-				File toSave = gui.getSavingFile();
-				if (toSave == null) {
-					final JFileChooser chooser = new JFileChooser(gui.getSavingFile());
-					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					chooser.setAcceptAllFileFilterUsed(false);
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
-					chooser.setFileFilter(filter);
-					if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-						if (!chooser.getSelectedFile().exists()) {
-							toSave = chooser.getSelectedFile();
-							if (!toSave.getAbsolutePath().endsWith(".project")) {
-								toSave = new File(toSave.getAbsolutePath() + ".project");
-							}
-							try {
-								toSave.createNewFile();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						} else {
-							int option = JOptionPane.showConfirmDialog(null, "Möchten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft löschen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
-							if (option == JOptionPane.OK_OPTION)
-								toSave = chooser.getSelectedFile();
-							else
-								return;
-						}
-					} else
-						return;
-					gui.setSavingFile(toSave);
-				}
-				gui.getTabPane().saveAll();
-				ZipCompromiser.zip(gui.getCurrentDirectory(), gui.getSavingFile());
-			} };
-			save.setEnabled(false);
-			fileMenu.add(save);
-			final JMenuItem saveAs = new MyMenuItem("Speichern unter...") { @Override public void execute(MyGui gui) {
-				File toSave;
-				final JFileChooser chooser = new JFileChooser(gui.getSavingFile());
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setAcceptAllFileFilterUsed(false);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("Projektdateien", "project");
-				chooser.setFileFilter(filter);
-				if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-					if (!chooser.getSelectedFile().exists()) {
-						toSave = chooser.getSelectedFile();
-						if (!toSave.getAbsolutePath().endsWith(".project")) {
-							toSave = new File(toSave.getAbsolutePath() + ".project");
-						}
-						try {
-							toSave.createNewFile();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} else {
-						int option = JOptionPane.showConfirmDialog(null, "Möchten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft löschen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
-						if (option == JOptionPane.OK_OPTION)
-							toSave = chooser.getSelectedFile();
-						else
-							return;
-					}
-				} else
-					return;
-				gui.setSavingFile(toSave);
-				gui.getTabPane().saveAll();
-				ZipCompromiser.zip(gui.getCurrentDirectory(), gui.getSavingFile());
-			} };
-			saveAs.setEnabled(false);
-			fileMenu.add(saveAs);
-			
-			fileMenu.addSeparator();
-			
-			MyMenuItem compile = new MyMenuItem("Kompilieren...") {
+	    MyMenuItem compile = new MyMenuItem("Kompilieren...") {
 
-				@Override
-				public void execute(MyGui gui) {
-					File output;
-					JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
-					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					chooser.setAcceptAllFileFilterUsed(false);
-					chooser.setFileFilter(new FileNameExtensionFilter("Executables", "exe"));
-					chooser.setApproveButtonText("Kompilieren");
-					chooser.setApproveButtonToolTipText("Klicken Sie hier um das Projekt zu kompilieren.");
-					chooser.setDialogTitle("Kompilieren nach");
-					if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-						if (!chooser.getSelectedFile().exists()) {
-							output = chooser.getSelectedFile();
-							if (!output.getAbsolutePath().endsWith(".exe")) {
-								output = new File(output.getAbsolutePath() + ".exe");
-							}
-							try {
-								output.createNewFile();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						} else {
-							int option = JOptionPane.showConfirmDialog(null, "Möchten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft löschen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
-							if (option == JOptionPane.OK_OPTION)
-								output = chooser.getSelectedFile();
-							else
-								return;
-						}
-					} else
-						return;
-					MyLinker.getExecutable(output, gui);
+		    @Override
+		    public void execute(MyGui gui) {
+			File output;
+			JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+			chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			chooser.setAcceptAllFileFilterUsed(false);
+			chooser.setFileFilter(new FileNameExtensionFilter("Executables", "exe"));
+			chooser.setApproveButtonText("Kompilieren");
+			chooser.setApproveButtonToolTipText("Klicken Sie hier um das Projekt zu kompilieren.");
+			chooser.setDialogTitle("Kompilieren nach");
+			if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			    if (!chooser.getSelectedFile().exists()) {
+				output = chooser.getSelectedFile();
+				if (!output.getAbsolutePath().endsWith(".exe")) {
+				    output = new File(output.getAbsolutePath() + ".exe");
 				}
+				try {
+				    output.createNewFile();
+				} catch (IOException e) {
+				    e.printStackTrace();
+				}
+			    } else {
+				int option = JOptionPane.showConfirmDialog(null, "M\u00F6chten Sie " + chooser.getSelectedFile().getName() + " wirklich dauerhaft l\u00F6schen ?", "Achtung!", JOptionPane.YES_NO_OPTION);
+				if (option == JOptionPane.OK_OPTION)
+				    output = chooser.getSelectedFile();
+				else
+				    return;
+			    }
+			} else
+			    return;
+			MyLinker.getExecutable(output, gui);
+		    }
 				
-			};
-			fileMenu.add(compile);
+		};
+	    fileMenu.add(compile);
 			
-			fileMenu.addSeparator();
+	    fileMenu.addSeparator();
 			
-			MyMenuItem exit = new MyMenuItem("Beenden...") { @Override public void execute(MyGui gui) {System.exit(0);} };
-			fileMenu.add(exit);
-		}
-		toReturn.addMenu(fileMenu);
-		
-		return toReturn;
+	    MyMenuItem exit = new MyMenuItem("Beenden...") { @Override public void execute(MyGui gui) {System.exit(0);} };
+	    fileMenu.add(exit);
 	}
+	toReturn.addMenu(fileMenu);
+		
+	return toReturn;
+    }
 	
-	static class MyString {
-		String str;
+    static class MyString {
+	String str;
 		
-		public MyString() {
-			this.str = null;
-		}
-		
-		public String get() {
-			return this.str;
-		}
-		
-		public void set(String str) {
-			this.str = str;
-		}
+	public MyString() {
+	    this.str = null;
 	}
+		
+	public String get() {
+	    return this.str;
+	}
+		
+	public void set(String str) {
+	    this.str = str;
+	}
+    }
 	
-	public static void setMenuEnabled(JMenu menu) {
-		for (int i = 0; i < menu.getMenuComponentCount(); i++) {
-			menu.getMenuComponent(i).setEnabled(true);
-			if (menu.getMenuComponent(i) instanceof JMenu) {
-				setMenuEnabled((JMenu) menu.getMenuComponent(i));
-			}
-		}
+    public static void setMenuEnabled(JMenu menu) {
+	for (int i = 0; i < menu.getMenuComponentCount(); i++) {
+	    menu.getMenuComponent(i).setEnabled(true);
+	    if (menu.getMenuComponent(i) instanceof JMenu) {
+		setMenuEnabled((JMenu) menu.getMenuComponent(i));
+	    }
 	}
+    }
 }
 
 /*
  * JFileChooser chooser = new JFileChooser();
-                    chooser.setDialogTitle("Speichern unter...");
-                    chooser.setDialogType(JFileChooser.SAVE_DIALOG);
-                    chooser.addChoosableFileFilter(new FileFilter() {
-                        public boolean accept(File f) {
-                            if (f.isDirectory())
-                                return true;
-                            return f.getName().toLowerCase().endsWith(".xml");
-                        }
+ chooser.setDialogTitle("Speichern unter...");
+ chooser.setDialogType(JFileChooser.SAVE_DIALOG);
+ chooser.addChoosableFileFilter(new FileFilter() {
+ public boolean accept(File f) {
+ if (f.isDirectory())
+ return true;
+ return f.getName().toLowerCase().endsWith(".xml");
+ }
 
-                        public String getDescription() {
-                            return "xml-File (*.xml)";
-                        }
-                    });
+ public String getDescription() {
+ return "xml-File (*.xml)";
+ }
+ });
  * */
